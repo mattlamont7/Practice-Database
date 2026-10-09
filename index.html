@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scale & Mode Practice Roller</title>
+<style>
+:root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#222;background:#f5f5f5}
+*{box-sizing:border-box}body{max-width:1250px;margin:0 auto;padding:25px 16px 48px;text-align:center}
+h1{margin:0 0 7px;font-size:clamp(25px,5vw,36px)}.sub,.note{color:#666}.sub{margin-top:0}
+.panel{background:#fff;border-radius:16px;padding:20px;margin:22px 0;box-shadow:0 2px 8px #0000000b}
+.controls{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:17px}
+label{font-weight:700}select,input{font:inherit;border:1px solid #bbb;border-radius:9px;padding:9px;background:#fff;color:#222}
+.practice{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin:20px 0}
+.card{background:white;border:3px solid #222;border-radius:16px;padding:20px;min-width:min(230px,100%);flex:1 1 210px;max-width:330px;box-shadow:0 5px 0 #bbb}
+.label{font-size:13px;color:#666;text-transform:uppercase;letter-spacing:1px}.value{font-size:clamp(26px,4vw,36px);font-weight:800;margin-top:9px;overflow-wrap:anywhere}
+.result{font-size:clamp(20px,4vw,28px);font-weight:800;margin:18px 0 8px}.formula{font-size:20px;min-height:30px;margin:0 0 16px}.formula span{font-weight:750}.count{color:#555;margin:14px}
+button{font:inherit;font-size:17px;font-weight:700;padding:12px 24px;border:0;border-radius:11px;cursor:pointer;margin:4px;background:#222;color:white}button.secondary{background:#e4e4e4;color:#222}button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #567efa;outline-offset:3px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}.tag{padding:9px 5px;border-radius:8px;background:#eee;font-size:13px}.tag.used{text-decoration:line-through;color:#999;background:#f7f7f7}.history{text-align:left}details{text-align:left;margin-top:16px}summary{cursor:pointer;font-weight:700;padding:8px}.history h2,.metronome h2{font-size:21px;margin:0 0 15px}
+.metrowidgets{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:18px}.widget{display:flex;align-items:center;gap:9px;flex-wrap:wrap;justify-content:center}.tempo-input{width:85px;text-align:center}.tempo-range{width:min(235px,55vw);accent-color:#222}.pulse{width:27px;height:27px;border-radius:50%;border:3px solid #222;background:#eee;transition:background .06s}.pulse.on{background:#27a268}.metrostatus{min-height:22px;color:#666;font-size:13px;margin-top:10px}
+.note{font-size:13px;line-height:1.5}@media(max-width:650px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.panel{padding:16px 12px}}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:20px;align-items:start}.maincol{min-width:0}.sidebar{position:sticky;top:16px}.sidebar .panel{margin-top:22px;text-align:left}.sidebar h2{margin:0 0 12px}.task-entry{display:flex;gap:6px}.task-entry input{min-width:0;flex:1}.task-entry button{padding:9px 13px;margin:0}.tasks{list-style:none;padding:0;margin:14px 0}.tasks li{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid #eee;overflow-wrap:anywhere}.tasks li span{flex:1;min-width:0}.tasks li.done span{text-decoration:line-through;color:#888}.tasks li button{font-size:13px;padding:5px 9px;margin:0}.tasks input{width:18px;height:18px}.timer-display{font-variant-numeric:tabular-nums;font-size:clamp(32px,4vw,46px);font-weight:800;margin:16px 0}.timer-controls{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}.timer-controls button{font-size:14px;padding:10px 14px}.timer-settings{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;align-items:center}.timer-settings input{width:75px}.timer-settings select{max-width:100%}.muted{color:#777;font-size:13px}@media(max-width:850px){.layout{grid-template-columns:1fr}.sidebar{position:static}.sidebar .panel{margin-top:0}}
+
+:root{color-scheme:dark;--bg:#10141b;--panel:#1b222d;--line:#344052;--text:#edf2f8;--muted:#a5b2c3;--accent:#72b9ff}body{max-width:1500px;background:var(--bg);color:var(--text)}.panel,.card{background:var(--panel);box-shadow:none;border-color:var(--line)}.card{border-width:2px}input,select,textarea{background:#111924;color:var(--text);border:1px solid var(--line);max-width:100%}button{background:#3279c9;color:white}button.secondary{background:#354154;color:white}.sub,.note,.muted,.label,.count,.metrostatus{color:var(--muted)}.tag{background:#283443;color:var(--text)}.tag.used{background:#202832;color:#79879a}.tasks li{border-color:var(--line)}.tasks li.done span{color:#8b98a8}.layout{grid-template-columns:minmax(0,1fr) 350px}.sidebar{max-height:calc(100vh - 30px);overflow:auto}.dashboard{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:20px 0}.stat{padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--panel);text-align:left}.stat b{display:block;font-size:25px;margin:6px 0}.section-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.section-heading h2{margin:0}.fields{display:flex;flex-wrap:wrap;gap:10px;align-items:end}.field{display:flex;flex-direction:column;gap:5px;text-align:left;flex:1 1 135px}.field.wide{flex:3 1 260px}textarea{font:inherit;border-radius:9px;padding:10px;width:100%;min-height:75px}table{border-collapse:collapse;width:100%;text-align:left}th,td{padding:10px;border-bottom:1px solid var(--line);font-size:14px}th{color:var(--muted)}.scroll{overflow-x:auto}.pill{font-size:12px;color:var(--accent)}.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.toolbar button{font-size:13px;padding:9px 12px}.tiny{font-size:13px;padding:7px 10px}.volume{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:10px}.volume input{width:140px}.notice{font-size:13px;color:var(--muted)}.danger{background:#8d3c48!important}.hidden{display:none!important}.empty{color:var(--muted);padding:15px}.row-item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.row-item div{min-width:0;overflow-wrap:anywhere}.row-item small{display:block;color:var(--muted)}@media(max-width:850px){.dashboard{grid-template-columns:repeat(2,1fr)}.sidebar{max-height:none;overflow:visible}}@media(max-width:520px){.dashboard{grid-template-columns:1fr 1fr}.stat b{font-size:20px}.panel{padding:15px}.fields{display:grid;grid-template-columns:1fr 1fr}.field.wide{grid-column:span 2}.layout{gap:0}}
+.scale-history{margin-top:14px;text-align:left}.scale-history-list{max-height:240px;overflow:auto;display:flex;flex-direction:column;gap:5px;margin-top:10px}.scale-history-list button{margin:0;text-align:left;padding:9px 12px;font-size:14px;background:#283443;color:var(--text);border:1px solid var(--line)}.scale-history-list button.active{background:#3279c9;border-color:#72b9ff}.scale-history-list button:hover{filter:brightness(1.18)}button:disabled{opacity:.4;cursor:not-allowed}</style>
+</head>
+<body>
+<h1>🎸 Guitar Practice Database</h1>
+<p class="sub">Plan your practice, roll scales, track sessions and measure progress — saved on this device.</p><div class="dashboard"><div class="stat">Total practice<b id="statTime">0m</b><small>Logged sessions</small></div><div class="stat">Sessions<b id="statSessions">0</b><small>All time</small></div><div class="stat">This week<b id="statWeek">0m</b><small>Last 7 days</small></div><div class="stat">Tasks done<b id="statTasks">0 / 0</b><small>Current list</small></div></div>
+<div class="layout"><main class="maincol"><section class="panel" aria-label="Scale practice">
+ <div class="controls">
+  <label for="naming">Scale naming</label>
+  <select id="naming">
+   <option value="mode">Modes</option>
+   <option value="parent">Parent Major</option>
+     </select>
+ </div>
+ <div class="practice">
+  <div class="card"><div class="label" id="leftLabel">Key</div><div class="value" id="leftValue">—</div></div>
+  <div class="card"><div class="label" id="rightLabel">Mode</div><div class="value" id="rightValue">—</div></div>
+ </div>
+ <div class="result" id="result" aria-live="polite">Ready to practice</div>
+ <div class="formula" id="formula" aria-live="polite"></div>
+ <button id="previousScale" class="secondary">← Previous</button><button id="roll">ROLL</button><button id="nextScale" class="secondary">Next →</button><button id="reset" class="secondary">RESET</button><div class="muted" id="scalePosition" aria-live="polite"></div><details class="scale-history"><summary>Scale roll history (click to review)</summary><div id="scaleHistory" class="scale-history-list"></div></details>
+ <div class="count" id="count"></div>
+</section>
+<section class="panel metronome" aria-label="Metronome">
+ <h2>Metronome</h2>
+ <div class="metrowidgets">
+  <div class="widget"><label for="bpm">Tempo</label><input class="tempo-input" id="bpm" type="number" min="40" max="240" step="1" value="100"><span>BPM</span></div>
+  <input class="tempo-range" id="tempoRange" aria-label="Tempo slider" type="range" min="40" max="240" step="1" value="100">
+  <div class="widget"><label for="subdivision">Subdivision</label><select id="subdivision">
+   <option value="1">Quarter notes (♩)</option><option value="2">Eighth notes (♪)</option><option value="3">Eighth-note triplets (3)</option><option value="4">Sixteenth notes (♬)</option><option value="8">32nd notes</option>
+  </select></div>
+  <div class="widget"><span class="pulse" id="pulse" aria-hidden="true"></span><button id="metroToggle" aria-pressed="false">START</button></div>
+ </div>
+ <div class="volume"><label for="metroVolume">Metronome volume</label><input id="metroVolume" type="range" min="0" max="100" value="55"><span id="metroVolumeValue">55%</span></div><div class="fields" style="margin-top:12px"><div class="field"><label for="beats">Beats per measure</label><input id="beats" type="number" min="1" max="16" value="4"></div><div class="field"><label for="accentBeat">Accent beat</label><input id="accentBeat" type="number" min="0" max="16" value="1" title="0 disables accents"></div></div><div class="metrostatus" id="metroStatus" aria-live="polite">4 beats per measure · Accent on beat 1 · Tempo is measured in quarter notes.</div>
+</section>
+<section class="panel history"><details><summary>84 scale & mode combinations</summary><div class="grid" id="grid"></div></details></section>
+<section class="panel" id="library"><div class="section-heading"><h2>Exercise Library</h2><span class="pill" id="exerciseCount"></span></div><p class="notice">Create exercises you can reuse in sessions and add to your to-do list.</p><form id="exerciseForm"><div class="fields"><div class="field wide"><label for="exerciseName">Exercise name</label><input id="exerciseName" maxlength="100" required placeholder="Alternate picking, Dorian patterns..."></div><div class="field"><label for="exerciseCategory">Category</label><select id="exerciseCategory"><option>Scales & Modes</option><option>Technique</option><option>Chords</option><option>Improvisation</option><option>Repertoire</option><option>Ear Training</option><option>Theory</option><option>Other</option></select></div><div class="field"><label for="exerciseTarget">Target BPM</label><input id="exerciseTarget" type="number" min="1" max="500" placeholder="Optional"></div></div><div class="field wide" style="margin-top:10px"><label for="exerciseNotes">Notes / instructions</label><textarea id="exerciseNotes" placeholder="What to practice and how..."></textarea></div><button type="submit">Save exercise</button></form><div id="exerciseList"></div></section>
+<section class="panel" id="sessionLog"><div class="section-heading"><h2>Practice Session Log</h2><span class="pill">Track your progress</span></div><form id="sessionForm"><div class="fields"><div class="field"><label for="sessionDate">Date</label><input id="sessionDate" type="date" required></div><div class="field"><label for="sessionExercise">Exercise</label><select id="sessionExercise"><option value="">General practice</option></select></div><div class="field"><label for="sessionMinutes">Minutes</label><input id="sessionMinutes" type="number" min="1" max="1440" required value="15"></div><div class="field"><label for="sessionBpm">BPM achieved</label><input id="sessionBpm" type="number" min="1" max="500" placeholder="Optional"></div><div class="field wide"><label for="sessionNotes">Session notes</label><textarea id="sessionNotes" placeholder="What improved? What needs work?"></textarea></div></div><button type="submit">Save practice session</button></form><div class="section-heading" style="margin-top:18px"><h3>Practice History</h3><select id="historyFilter" aria-label="Filter session history"><option value="">All exercises</option></select></div><div class="scroll"><table><thead><tr><th>Date</th><th>Exercise</th><th>Time</th><th>BPM</th><th>Notes</th><th></th></tr></thead><tbody id="sessionRows"></tbody></table></div></section>
+<section class="panel"><div class="section-heading"><h2>Progress by Exercise</h2><span class="pill">Based on logged sessions</span></div><div class="scroll"><table><thead><tr><th>Exercise</th><th>Sessions</th><th>Total time</th><th>Best BPM</th><th>Latest BPM</th></tr></thead><tbody id="progressRows"></tbody></table></div></section>
+<section class="panel"><div class="section-heading"><h2>Data & Backup</h2></div><p class="notice">Your database is stored locally in this browser. Export a backup to transfer it to your phone or another computer; importing replaces the current database. This is not automatic cloud sync.</p><div class="toolbar"><button id="exportData" type="button">Export JSON backup</button><button id="importDataButton" class="secondary" type="button">Import backup</button><input id="importData" type="file" accept=".json,application/json" hidden><button id="exportCsv" type="button" class="secondary">Export sessions CSV</button></div><p id="dataStatus" class="notice" role="status"></p></section>
+</main><aside class="sidebar" aria-label="Practice tools"><section class="panel"><h2>⏱ Practice Timer</h2><div class="timer-settings"><label for="timerMode">Mode</label><select id="timerMode"><option value="stopwatch">Stopwatch</option><option value="countdown">Countdown</option></select><label for="timerMinutes" id="minutesLabel" hidden>Minutes</label><input id="timerMinutes" type="number" min="1" max="999" value="10" hidden></div><div class="timer-display" id="timerDisplay" role="timer">00:00</div><div class="timer-controls"><button id="timerStart">Start</button><button class="secondary" id="timerReset">Reset</button></div><div class="volume"><label for="alarmVolume">Alarm volume</label><input id="alarmVolume" type="range" min="0" max="100" value="35"><span id="alarmVolumeValue">35%</span></div><label style="display:flex;align-items:center;gap:8px;justify-content:center;margin:12px"><input id="alarmEnabled" type="checkbox" checked> Play countdown alarm</label><button id="timerLog" class="secondary tiny">Log elapsed time</button><p class="muted" id="timerStatus">Ready for your practice session</p></section><section class="panel"><h2>✓ Practice To-Do List</h2><form id="taskForm" class="task-entry"><input id="taskInput" maxlength="160" placeholder="Add an exercise..." aria-label="New practice task" required><button type="submit">Add</button></form><ul class="tasks" id="tasks"></ul><p class="muted" id="taskCount"></p><button class="secondary" id="clearCompleted" style="font-size:13px;padding:9px 12px">Clear completed</button><p class="muted">Tasks are saved on this device.</p></section></aside></div><p class="note">Keys: C, G, D, A, E, B, F#, F, Bb, Eb, Ab, Db. Mode formulas use the major scale as the reference. Locrian has a natural 4, not ♭4.</p>
+<script>
+'use strict';
+const keys=['C','G','D','A','E','B','F#','F','Bb','Eb','Ab','Db'];
+const modes=['Ionian','Dorian','Phrygian','Lydian','Mixolydian','Aeolian','Locrian'];
+const modeInfo={
+ Ionian:{degree:1,offset:0,formula:'1 2 3 4 5 6 7'},
+ Dorian:{degree:2,offset:2,formula:'1 2 ♭3 4 5 6 ♭7'},
+ Phrygian:{degree:3,offset:4,formula:'1 ♭2 ♭3 4 5 ♭6 ♭7'},
+ Lydian:{degree:4,offset:5,formula:'1 2 3 ♯4 5 6 7'},
+ Mixolydian:{degree:5,offset:7,formula:'1 2 3 4 5 6 ♭7'},
+ Aeolian:{degree:6,offset:9,formula:'1 2 ♭3 4 5 ♭6 ♭7'},
+ Locrian:{degree:7,offset:11,formula:'1 ♭2 ♭3 4 ♭5 ♭6 ♭7'}
+};
+const pitchNames=['C','Db','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
+const pitchClass={C:0,'C#':1,Db:1,D:2,Eb:3,E:4,F:5,'F#':6,G:7,Ab:8,A:9,Bb:10,B:11};
+const all=modes.flatMap(mode=>keys.map(key=>({key,mode})));
+let remaining=[],used=[],currentItem=null,scaleIndex=-1;
+const el=id=>document.getElementById(id);
+function parentMajor(key,mode){return pitchNames[(pitchClass[key]-modeInfo[mode].offset+12)%12]}
+function ordinal(n){return n+(n===1?'st':n===2?'nd':n===3?'rd':'th')}
+function updateDisplay(){
+ const style=el('naming').value;
+ el('leftLabel').textContent=style==='parent'?'Parent major scale':'Key';
+ el('rightLabel').textContent=style==='parent'?'Starting degree':'Mode';
+ if(!currentItem){el('leftValue').textContent='—';el('rightValue').textContent='—';el('result').textContent='Ready to practice';el('formula').textContent='';return}
+ const {key,mode}=currentItem,degree=modeInfo[mode].degree,parent=parentMajor(key,mode);
+ el('leftValue').textContent=style==='parent'?parent+' major':key;
+ el('rightValue').textContent=style==='parent'?ordinal(degree):mode;
+ const parentText=`${parent} major from the ${ordinal(degree)} degree`;
+ el('result').textContent='Play '+(style==='parent'?parentText:`${key} ${mode}`);
+ el('formula').textContent=`${mode} formula: ${modeInfo[mode].formula}`;
+}
+function render(){el('count').textContent=`${remaining.length} / 84 combinations remaining`;const usedSet=new Set(used.map(x=>`${x.key}|${x.mode}`));el('grid').replaceChildren(...all.map(item=>{let tag=document.createElement('div');tag.className='tag'+(usedSet.has(`${item.key}|${item.mode}`)?' used':'');tag.textContent=`${item.key} — ${item.mode}`;return tag}))}
+function showScaleAt(index){
+ if(index<0||index>=used.length)return;
+ scaleIndex=index;currentItem=used[index];updateDisplay();render();renderScaleHistory();saveRoller();
+}
+function renderScaleHistory(){
+ const holder=el('scaleHistory');holder.replaceChildren();
+ used.forEach((item,i)=>{const btn=document.createElement('button');btn.type='button';btn.textContent=`${i+1}. ${item.key} ${item.mode}`;btn.className=i===scaleIndex?'active':'';btn.setAttribute('aria-current',i===scaleIndex?'true':'false');btn.onclick=()=>showScaleAt(i);holder.append(btn)});
+ if(!used.length){const msg=document.createElement('p');msg.className='muted';msg.textContent='Your rolled scales will appear here.';holder.append(msg)}
+ el('scalePosition').textContent=used.length?`Viewing roll ${scaleIndex+1} of ${used.length} · ${remaining.length} unrolled`:'No scales rolled yet';
+ el('previousScale').disabled=scaleIndex<=0;
+ el('nextScale').disabled=scaleIndex>=used.length-1;
+}
+function resetAll(){remaining=all.map(x=>({...x}));used=[];currentItem=null;scaleIndex=-1;updateDisplay();render();renderScaleHistory();saveRoller()}
+function roll(){if(!remaining.length){el('result').textContent='All 84 combinations completed!';return}const i=Math.floor(Math.random()*remaining.length);currentItem=remaining.splice(i,1)[0];used.push(currentItem);scaleIndex=used.length-1;updateDisplay();render();renderScaleHistory();saveRoller()}
+el('naming').addEventListener('change',updateDisplay);el('roll').addEventListener('click',roll);el('reset').addEventListener('click',()=>{if(!used.length||confirm('Reset all 84 scales and clear this roll history?'))resetAll()});
+el('previousScale').addEventListener('click',()=>showScaleAt(scaleIndex-1));el('nextScale').addEventListener('click',()=>showScaleAt(scaleIndex+1));
+
+// Web Audio look-ahead scheduling keeps the click timing independent of UI rendering.
+let audioCtx=null,metronomeRunning=false,timerID=null,nextClickTime=0,tickCount=0;
+const lookAheadMs=25,scheduleAheadSeconds=0.12;
+function getBpm(){return Math.max(40,Math.min(240,Number(el('bpm').value)||100))}
+function setBpm(value){const n=Math.max(40,Math.min(240,Math.round(Number(value)||100)));el('bpm').value=n;el('tempoRange').value=n}
+el('bpm').addEventListener('change',()=>setBpm(el('bpm').value));el('tempoRange').addEventListener('input',()=>setBpm(el('tempoRange').value));
+function playTick(time,accent,quarterBeat){
+ const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();
+ osc.type='sine';osc.frequency.setValueAtTime(accent?1175:quarterBeat?870:620,time);
+ gain.gain.setValueAtTime(0.0001,time);gain.gain.exponentialRampToValueAtTime(Math.max(0.0001,(accent?0.34:quarterBeat?0.22:0.10)*Number(el('metroVolume').value)/100),time+0.002);gain.gain.exponentialRampToValueAtTime(0.0001,time+0.043);
+ osc.connect(gain);gain.connect(audioCtx.destination);osc.start(time);osc.stop(time+0.05);
+}
+function scheduler(){if(!metronomeRunning||!audioCtx)return;
+ while(nextClickTime<audioCtx.currentTime+scheduleAheadSeconds){
+  const subdiv=Number(el('subdivision').value),index=tickCount%(Math.max(1,Number(el('beats').value)||4)*subdiv);
+  playTick(nextClickTime,Number(el('accentBeat').value)>0&&index===(Number(el('accentBeat').value)-1)*subdiv,index%subdiv===0);
+  nextClickTime+=(60/getBpm())/subdiv;tickCount++;
+ }
+}
+async function toggleMetro(){
+ if(metronomeRunning){stopMetro();return}
+ try{
+  const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+  if(!AudioContextClass)throw new Error('Web Audio is unavailable in this browser.');
+  if(!audioCtx)audioCtx=new AudioContextClass();await audioCtx.resume();
+  metronomeRunning=true;tickCount=0;nextClickTime=audioCtx.currentTime+0.04;
+  el('metroToggle').textContent='STOP';el('metroToggle').setAttribute('aria-pressed','true');el('metroStatus').textContent='Playing · '+el('beats').value+' beats per measure';
+  scheduler();timerID=setInterval(scheduler,lookAheadMs);
+ }catch(err){el('metroStatus').textContent='Cannot start audio: '+err.message}
+}
+function stopMetro(){metronomeRunning=false;if(timerID!==null){clearInterval(timerID);timerID=null}el('metroToggle').textContent='START';el('metroToggle').setAttribute('aria-pressed','false');el('pulse').classList.remove('on');el('metroStatus').textContent='Stopped · Tempo is measured in quarter notes.';
+ // Suspending also silences clicks already scheduled slightly ahead.
+ if(audioCtx&&audioCtx.state==='running')audioCtx.suspend().catch(()=>{});
+}
+el('metroToggle').addEventListener('click',toggleMetro);
+el('subdivision').addEventListener('change',()=>{if(metronomeRunning){tickCount=0;nextClickTime=Math.max(nextClickTime,audioCtx.currentTime+0.01)}});
+// Visual cue is intentionally decorative; actual audio is scheduled by AudioContext.
+setInterval(()=>{if(!metronomeRunning||!audioCtx)return;const phase=(audioCtx.currentTime*getBpm()/60)%1;el('pulse').classList.toggle('on',phase<0.12)},50);
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&metronomeRunning)stopMetro()});
+
+// Practice timer uses a wall-clock deadline so background tabs do not distort elapsed time.
+let timerRunning=false,timerElapsed=0,timerStartedAt=0,timerInterval=null;
+const timerMode=el('timerMode'),timerMinutes=el('timerMinutes');
+function timerDuration(){return Math.max(1,Math.min(999,Number(timerMinutes.value)||10))*60000}
+function timerCurrent(){return timerElapsed+(timerRunning?Date.now()-timerStartedAt:0)}
+function formatTime(ms){const sec=Math.floor(Math.max(0,ms)/1000);return String(Math.floor(sec/3600)).padStart(2,'0')+':'+String(Math.floor(sec%3600/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0')}
+function renderTimer(){const elapsed=timerCurrent(),left=timerDuration()-elapsed;el('timerDisplay').textContent=formatTime(timerMode.value==='countdown'?left:elapsed);if(timerRunning&&timerMode.value==='countdown'&&left<=0){pauseTimer();timerElapsed=timerDuration();el('timerDisplay').textContent='00:00:00';el('timerStatus').textContent='Time is up!';playAlarm();}}
+function pauseTimer(){if(timerRunning){timerElapsed=timerCurrent();timerRunning=false;}clearInterval(timerInterval);timerInterval=null;el('timerStart').textContent='Start';renderTimer()}
+function resetTimer(){pauseTimer();timerElapsed=0;el('timerStatus').textContent='Ready for your practice session';renderTimer()}
+el('timerStart').addEventListener('click',()=>{if(timerRunning){pauseTimer();el('timerStatus').textContent='Paused';return}if(timerMode.value==='countdown'&&timerElapsed>=timerDuration())timerElapsed=0;timerStartedAt=Date.now();timerRunning=true;el('timerStart').textContent='Pause';el('timerStatus').textContent='Practicing...';timerInterval=setInterval(renderTimer,200);renderTimer()});
+el('timerReset').addEventListener('click',resetTimer);
+timerMode.addEventListener('change',()=>{resetTimer();const show=timerMode.value==='countdown';timerMinutes.hidden=!show;el('minutesLabel').hidden=!show});timerMinutes.addEventListener('change',resetTimer);renderTimer();
+// Local practice task persistence.
+const taskStorageKey='guitar-practice-tasks-v1';let tasks=[];
+try{const stored=JSON.parse(localStorage.getItem(taskStorageKey)||'[]');if(Array.isArray(stored))tasks=stored.filter(t=>t&&typeof t.text==='string').map(t=>({id:String(t.id),text:t.text,done:!!t.done}));}catch(e){}
+function saveTasks(){setTimeout(()=>updateStats(),0);try{localStorage.setItem(taskStorageKey,JSON.stringify(tasks))}catch(e){el('taskCount').textContent='Browser storage unavailable'}}
+function renderTasks(){const list=el('tasks');list.replaceChildren();tasks.forEach(t=>{const li=document.createElement('li');if(t.done)li.className='done';const check=document.createElement('input');check.type='checkbox';check.checked=t.done;check.setAttribute('aria-label','Complete '+t.text);check.addEventListener('change',()=>{t.done=check.checked;saveTasks();renderTasks()});const span=document.createElement('span');span.textContent=t.text;const del=document.createElement('button');del.className='secondary';del.textContent='✕';del.setAttribute('aria-label','Delete '+t.text);del.addEventListener('click',()=>{tasks=tasks.filter(x=>x.id!==t.id);saveTasks();renderTasks()});li.append(check,span,del);list.append(li)});el('taskCount').textContent=`${tasks.filter(t=>t.done).length} of ${tasks.length} completed`}
+el('taskForm').addEventListener('submit',e=>{e.preventDefault();const input=el('taskInput'),value=input.value.trim();if(!value)return;tasks.push({id:String(Date.now())+Math.random(),text:value,done:false});input.value='';saveTasks();renderTasks();input.focus()});
+el('clearCompleted').addEventListener('click',()=>{tasks=tasks.filter(t=>!t.done);saveTasks();renderTasks()});renderTasks();
+
+// All database records use stable IDs; legacy to-dos are retained in their original storage key.
+const DB_KEY='guitar-practice-database-v2';
+let db={exercises:[],sessions:[],roller:null,settings:{}};
+try{const raw=JSON.parse(localStorage.getItem(DB_KEY)||'{}');if(raw&&typeof raw==='object'){db.exercises=Array.isArray(raw.exercises)?raw.exercises:[];db.sessions=Array.isArray(raw.sessions)?raw.sessions:[];db.roller=raw.roller||null;db.settings=raw.settings||{}}}catch(e){}
+const uid=()=>typeof crypto!=='undefined'&&crypto.randomUUID?crypto.randomUUID():String(Date.now())+'-'+Math.random().toString(36).slice(2);
+function saveDB(){try{localStorage.setItem(DB_KEY,JSON.stringify(db));el('dataStatus').textContent='Saved locally.'}catch(e){el('dataStatus').textContent='Storage full or unavailable — export a backup.'}}
+function saveRoller(){if(typeof db==='undefined'||!db)return;db.roller={used:used.map(x=>({key:x.key,mode:x.mode})),current:currentItem,scaleIndex};saveDB()}
+function restoreRoller(){if(!db.roller)return;const valid=new Set(all.map(x=>x.key+'|'+x.mode));used=(db.roller.used||[]).filter(x=>x&&valid.has(x.key+'|'+x.mode));const seen=new Set(used.map(x=>x.key+'|'+x.mode));remaining=all.filter(x=>!seen.has(x.key+'|'+x.mode));scaleIndex=Number.isInteger(db.roller.scaleIndex)?Math.max(-1,Math.min(db.roller.scaleIndex,used.length-1)):used.length-1;currentItem=scaleIndex>=0?used[scaleIndex]:null;updateDisplay();render();renderScaleHistory()}
+if(db.roller)restoreRoller();else resetAll();
+const todayLocal=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
+el('sessionDate').value=todayLocal();
+function exerciseName(id){return db.exercises.find(e=>e.id===id)?.name|| (id?'Deleted exercise':'General practice')}
+function renderExercises(){const list=el('exerciseList');list.replaceChildren();el('exerciseCount').textContent=db.exercises.length+' saved';db.exercises.forEach(e=>{const item=document.createElement('div');item.className='row-item';const info=document.createElement('div');const strong=document.createElement('strong');strong.textContent=e.name;const small=document.createElement('small');small.textContent=e.category+(e.target?' · Goal '+e.target+' BPM':'')+(e.notes?' · '+e.notes:'');info.append(strong,small);const actions=document.createElement('div');actions.className='toolbar';const task=document.createElement('button');task.className='tiny secondary';task.textContent='+ To-do';task.onclick=()=>{tasks.push({id:uid(),text:e.name,done:false});saveTasks();renderTasks()};const log=document.createElement('button');log.className='tiny secondary';log.textContent='Log';log.onclick=()=>{el('sessionExercise').value=e.id;el('sessionLog').scrollIntoView({behavior:'smooth'})};const del=document.createElement('button');del.className='tiny danger';del.textContent='Delete';del.onclick=()=>{if(confirm('Delete exercise? Past sessions will remain.')){db.exercises=db.exercises.filter(x=>x.id!==e.id);saveDB();renderAll()}};actions.append(task,log,del);item.append(info,actions);list.append(item)});if(!db.exercises.length)list.innerHTML='<p class="empty">No saved exercises yet.</p>';const previous=el('sessionExercise').value,filter=el('historyFilter').value;for(const id of ['sessionExercise','historyFilter']){const sel=el(id);sel.replaceChildren();const base=new Option(id==='sessionExercise'?'General practice':'All exercises','');sel.add(base);db.exercises.forEach(e=>sel.add(new Option(e.name,e.id)));}el('sessionExercise').value=previous;el('historyFilter').value=filter}
+el('exerciseForm').onsubmit=e=>{e.preventDefault();db.exercises.push({id:uid(),name:el('exerciseName').value.trim(),category:el('exerciseCategory').value,target:Number(el('exerciseTarget').value)||null,notes:el('exerciseNotes').value.trim()});saveDB();e.target.reset();renderAll()};
+el('sessionForm').onsubmit=e=>{e.preventDefault();const mins=Number(el('sessionMinutes').value);if(!Number.isFinite(mins)||mins<1)return;db.sessions.push({id:uid(),date:el('sessionDate').value,exerciseId:el('sessionExercise').value,minutes:mins,bpm:Number(el('sessionBpm').value)||null,notes:el('sessionNotes').value.trim()});saveDB();el('sessionNotes').value='';renderAll()};
+function updateStats(){if(!el('statTime'))return;const total=db.sessions.reduce((a,s)=>a+(Number(s.minutes)||0),0);const cutoff=new Date();cutoff.setDate(cutoff.getDate()-6);const start=[cutoff.getFullYear(),String(cutoff.getMonth()+1).padStart(2,'0'),String(cutoff.getDate()).padStart(2,'0')].join('-');const weekly=db.sessions.filter(s=>s.date>=start).reduce((a,s)=>a+(Number(s.minutes)||0),0);el('statTime').textContent=Math.round(total)+'m';el('statSessions').textContent=db.sessions.length;el('statWeek').textContent=Math.round(weekly)+'m';el('statTasks').textContent=tasks.filter(t=>t.done).length+' / '+tasks.length}
+function renderSessions(){const rows=el('sessionRows');rows.replaceChildren();const filter=el('historyFilter').value;const entries=db.sessions.filter(s=>!filter||s.exerciseId===filter).sort((a,b)=>b.date.localeCompare(a.date));entries.forEach(s=>{const tr=document.createElement('tr');for(const val of [s.date,exerciseName(s.exerciseId),s.minutes+'m',s.bpm||'—',s.notes||'—']){const td=document.createElement('td');td.textContent=val;tr.append(td)}const td=document.createElement('td'),del=document.createElement('button');del.className='tiny danger';del.textContent='×';del.title='Delete session';del.onclick=()=>{if(confirm('Delete this session?')){db.sessions=db.sessions.filter(x=>x.id!==s.id);saveDB();renderAll()}};td.append(del);tr.append(td);rows.append(tr)});if(!entries.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=6;td.className='empty';td.textContent='No sessions logged yet.';tr.append(td);rows.append(tr)}const progress=el('progressRows');progress.replaceChildren();const groups=new Map();db.sessions.forEach(s=>{const key=s.exerciseId||'';if(!groups.has(key))groups.set(key,[]);groups.get(key).push(s)});for(const [id,items] of groups){const sorted=[...items].sort((a,b)=>b.date.localeCompare(a.date));const bpms=items.map(x=>Number(x.bpm)).filter(x=>x>0);const tr=document.createElement('tr');for(const val of [exerciseName(id),items.length,items.reduce((a,x)=>a+Number(x.minutes||0),0)+'m',bpms.length?Math.max(...bpms):'—',sorted.find(x=>x.bpm)?.bpm||'—']){const td=document.createElement('td');td.textContent=val;tr.append(td)}progress.append(tr)}if(!groups.size){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=5;td.className='empty';td.textContent='Log sessions to see your progress.';tr.append(td);progress.append(tr)}}
+function renderAll(){renderExercises();renderSessions();updateStats()}
+el('historyFilter').onchange=renderSessions;
+function playAlarm(){if(!el('alarmEnabled').checked||Number(el('alarmVolume').value)===0)return;try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const ctx=audioCtx||new C();ctx.resume().then(()=>{const start=ctx.currentTime+.02;[0,.22,.44].forEach((delay,i)=>{const osc=ctx.createOscillator(),g=ctx.createGain(),t=start+delay;osc.type='sine';osc.frequency.value=i===2?880:660;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(.0001,.18*Number(el('alarmVolume').value)/100),t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+.17);osc.connect(g);g.connect(ctx.destination);osc.start(t);osc.stop(t+.18)});if(ctx!==audioCtx)setTimeout(()=>ctx.close().catch(()=>{}),1200)}).catch(()=>{})}catch(e){}}
+for(const name of ['metroVolume','alarmVolume']){const input=el(name);if(db.settings[name]!=null)input.value=db.settings[name];el(name+'Value').textContent=input.value+'%';input.oninput=()=>{el(name+'Value').textContent=input.value+'%';db.settings[name]=input.value;saveDB()}}
+for(const name of ['beats','accentBeat','bpm','subdivision','alarmEnabled']){const input=el(name);if(db.settings[name]!=null){if(input.type==='checkbox')input.checked=!!db.settings[name];else input.value=db.settings[name]}input.addEventListener('change',()=>{db.settings[name]=input.type==='checkbox'?input.checked:input.value;saveDB()})}setBpm(el('bpm').value);
+el('timerLog').onclick=()=>{const minutes=Math.max(1,Math.round(timerCurrent()/60000));el('sessionMinutes').value=minutes;el('sessionBpm').value=getBpm();el('sessionDate').value=todayLocal();el('sessionLog').scrollIntoView({behavior:'smooth'});el('timerStatus').textContent='Timer copied to session form — save the session below.'};
+function download(content,name,type){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),2000)}
+el('exportData').onclick=()=>download(JSON.stringify({version:2,exportedAt:new Date().toISOString(),exercises:db.exercises,sessions:db.sessions,roller:db.roller,settings:db.settings,tasks},null,2),'guitar-practice-backup-'+todayLocal()+'.json','application/json');
+el('importDataButton').onclick=()=>el('importData').click();
+el('importData').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{if(f.size>5e6)throw Error('File too large');const d=JSON.parse(await f.text());if(!d||!Array.isArray(d.exercises)||!Array.isArray(d.sessions)||!Array.isArray(d.tasks))throw Error('Not a valid practice backup');if(!confirm('Replace current exercises, sessions and tasks with this backup?'))return;db={exercises:d.exercises,sessions:d.sessions,roller:d.roller||null,settings:d.settings||{}};tasks=d.tasks;saveDB();saveTasks();restoreRoller();renderTasks();renderAll();el('dataStatus').textContent='Backup imported. Reload to apply imported audio settings.'}catch(err){el('dataStatus').textContent='Import failed: '+err.message}finally{e.target.value=''}};
+el('exportCsv').onclick=()=>{const csv=[['Date','Exercise','Minutes','BPM','Notes'],...db.sessions.map(s=>[s.date,exerciseName(s.exerciseId),s.minutes,s.bpm||'',s.notes||''])].map(row=>row.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(',')).join('\r\n');download(csv,'practice-sessions-'+todayLocal()+'.csv','text/csv')};
+renderAll();
+</script>
+</body>
+</html>
